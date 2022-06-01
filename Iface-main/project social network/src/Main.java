@@ -113,33 +113,66 @@ public abstract class Main {
                             System.out.print("Type:");
                             int choice = input3.nextInt();
                             if(choice == 1){
-                                System.out.print("Type the new name: ");
-                                String newName = input4.nextLine();
-                                users.get(id).setName(newName);
+                                try{
+                                    System.out.print("Type the new name: ");
+                                    String newName = input4.nextLine();
+                                    if(hasDigits(newName)) {
+                                        throw new Exception("Number is not allowed.");
+                                    }
+                                    users.get(id).setName(newName);
+                                }catch (Exception e) {
+                                    System.out.println("Exception error: " + e.getMessage());
+                                }
+
                             }else if(choice == 2){
-                                System.out.print("Type the new login: ");
-                                String newName = input4.next();
-                                users.get(id).setLogin(newName);
+                                try{
+                                    System.out.print("Type the new login: ");
+                                    String newLogin = input4.nextLine();
+                                    if (isDigit(newLogin)){
+                                        throw new Exception("Starting with number is not allowed.");
+                                    }
+                                    int x = IdBylogin(users,newLogin);
+                                    if(x != -1){
+                                        throw new Exception("This login already exist!");
+                                    }
+                                    users.get(id).setLogin(newLogin);
+                                }catch (Exception e) {
+                                    System.out.println("Exception error: " + e.getMessage());
+                                }
                             }else if(choice == 3){
-                                System.out.print("Type the new password: ");
-                                String newName = input4.next();
-                                users.get(id).setPassword(newName);
+                                try{
+                                    System.out.print("Type the new password: ");
+                                    String newPassword = input4.next();
+                                    users.get(id).setPassword(newPassword);
+                                }catch (Exception e){
+                                    System.out.println("Exception error: " + e.getMessage());
+                                }
                             }else if(choice == 4){
-                                System.out.print("Type the new age: ");
-                                int age = input4.nextInt();
-                                users.get(id).setAge(age);
+                                try{
+                                    System.out.print("Type the new age: ");
+                                    int age = input4.nextInt();
+                                    if(age <= 0 || age >= 130){
+                                        throw new Exception("This age isn't valid!");
+                                    }
+                                    users.get(id).setAge(age);
+                                }catch (Exception e){
+                                    System.out.println("Exception error: " + e.getMessage());
+                                }
+
                             }else if(choice == 5){
                                 System.out.print("The the new address: ");
-                                String newName = input4.next();
-                                users.get(id).setAddress(newName);
+                                String newAddress = input4.next();
+                                users.get(id).setAddress(newAddress);
                             }else if(choice == 6){
                                 System.out.println("Do you want that your feed can only seen by your friends?(YES) or (NO) ");
                                 System.out.print("Type: ");
                                 String op3 = input4.next();
                                 if(op3.equals("NO")){
                                     users.get(id).setJustFriends(false);
-                                }else{
+                                }else if(op3.equals("YES")){
                                     users.get(id).setJustFriends(true);
+                                }else{
+                                    System.out.println("Only type YES or NO!");
                                 }
                             }else{
                                 System.out.println("The choice doesn't exist!");
@@ -172,8 +205,7 @@ public abstract class Main {
                                 String msg;
                                 int id2 = getIdByName(users);
                                 if(id2 == -1){
-                                    System.out.println("USER DOESN'T EXIST!");
-                                    continue;
+                                    throw new Exception("USER DOESN'T EXIST!");
                                 }
                                 System.out.print("Type the message: ");
                                 msg = input3.nextLine();
@@ -220,20 +252,31 @@ public abstract class Main {
                                     if(!comunities.get(id2).isModerator(id4)){
                                         continue;
                                     }
-                                    int id3 = getIdByName(users);
-                                    if(id3 == -1){
-                                        System.out.println("USER DOESN'T EXIST!");
-                                        continue;
+                                    try{
+                                        int id3 = getIdByName(users);
+                                        if(id3 == -1){
+                                            throw new Exception("USER DOESN'T EXIST!");
+                                        }
+                                        id3 = comunities.get(id2).searchMember(users.get(id3).getLogin());
+                                        if(id3 != -1){
+                                            throw new Exception("USER IS ALREADY IN THE COMMUNITIES!");
+                                        }
+                                        users.get(id3).addCommunity(comunities.get(id2).getName());
+                                        Member newUser = new Normal(users.get(id3).getName(),users.get(id3).getLogin());
+                                        comunities.get(id2).addUser(newUser);
+                                        System.out.println("The user was added! \n ");
+                                    }catch (Exception e){
+                                        System.out.println("Exception error: " + e.getMessage());
                                     }
-                                    users.get(id3).addCommunity(comunities.get(id2).getName());
-                                    Member newuser = new Normal(users.get(id3).getName(),users.get(id3).getLogin());
-                                    comunities.get(id2).addUser(newuser);
-                                    System.out.println("The user was added! \n ");
                                 }else{
-                                    Scanner input6 = new Scanner(System.in);
-                                    System.out.print("Type the news: ");
-                                    String neews = input6.nextLine();
-                                    comunities.get(id2).addNews(neews);
+                                    try{
+                                        Scanner input6 = new Scanner(System.in);
+                                        System.out.print("Type the news: ");
+                                        String neews = input6.nextLine();
+                                        comunities.get(id2).addNews(neews);
+                                    }catch (Exception e){
+                                        System.out.println("Exception error: " + e.getMessage());
+                                    }
                                 }
                             } catch (Exception e) {
                                 System.out.println("exception: " + e.getMessage());
@@ -265,11 +308,16 @@ public abstract class Main {
                             }
                             
                         } else if (op2 == 8) {
-                            System.out.println("  Send a news feed  \n");
-                            System.out.print("Type: ");
-                            String news = input3.nextLine();
-                            users.get(id).getNews(news);
-                            System.out.println("News feed was add!");
+                            try{
+                                System.out.println("  Send a news feed  \n");
+                                System.out.print("Type: ");
+                                String news = input3.nextLine();
+                                users.get(id).getNews(news);
+                                System.out.println("News feed was add!");
+                            }catch (Exception e){
+                                System.out.println("Exception error: " + e.getMessage());
+                            }
+
                         } else if (op2 == 9) {
                             try {
                                 System.out.println("  Visiting a user  \n");
