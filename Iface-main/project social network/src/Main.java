@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.InputMismatchException;
-
 public abstract class Main {
     public static boolean hasDigits(String str)
     {
@@ -14,10 +12,7 @@ public abstract class Main {
     }
     public static boolean isDigit(String str)
     {
-        if (Character.isDigit(str.charAt(0))){
-            return true;
-        }
-        return false;
+        return Character.isDigit(str.charAt(0));
     }
     public static int getIdByName(ArrayList< ? extends General > users) throws Exception {
         Scanner input22 = new Scanner(System.in);
@@ -35,19 +30,6 @@ public abstract class Main {
         }
         return id;
     }
-    public static int getIdBylogin(ArrayList<User> users){
-        Scanner input22 = new Scanner(System.in);
-        System.out.print("Type the login user: ");
-        String login = input22.nextLine();
-        int id = - 1;
-        for(int i = 0; i < users.size(); i++) {
-            String curr = users.get(i).getLogin();
-            if (login.equals(curr)) {
-                id = i;
-            }
-        }
-        return id;
-    }
     public static int IdBylogin(ArrayList<User> users, String login){
         int id = - 1;
         for(int i = 0; i < users.size(); i++) {
@@ -58,59 +40,66 @@ public abstract class Main {
         }
         return id;
     }
+    public static int getIdBylogin(ArrayList<User> users){
+        Scanner input22 = new Scanner(System.in);
+        System.out.print("Type the login user: ");
+        String login = input22.nextLine();
+        return IdBylogin(users,login);
+    }
+
     public static boolean getPassword(User x){
         Scanner input22 = new Scanner(System.in);
         System.out.print("Type the password: ");
         String password = input22.next();
         return password.equals(x.getPassword());
     }
-
+    // new methods
+    public static int showOptions(){
+        int op = 0;
+        try{
+            Scanner input23 = new Scanner(System.in);
+            System.out.println("Press (1) to login/ (2) to create a new user/ (3) to get out");
+            System.out.print("Type: ");
+            op = input23.nextInt();
+        } catch(Exception e){
+            System.out.println("You can only type numbers, Exception error: " + e.getMessage());
+        }
+        return op;
+    }
+    public static boolean loginUser(ArrayList<User> users,int id){
+        boolean ok = false;
+        if(id == -1){
+            System.out.println("USER DOESN'T EXIST!");
+        }else{
+            ok = getPassword(users.get(id));
+            if(!ok){
+                System.out.println("WRONG PASSWORD!");
+            }else{
+                System.out.println("SUCCESSFUL LOGIN!");
+            }
+        }
+        return ok;
+    }
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        ArrayList<User> users = new ArrayList<User>();
-        ArrayList<Comunity> comunities = new ArrayList<Comunity>();
+        ArrayList<User> users = new ArrayList<>();
+        ArrayList<Comunity> comunities = new ArrayList<>();
         System.out.println("WELCOME TO IFACE \n");
         while(true){
             int op = -1;
             while(op == -1){
-                try{
-                    Scanner input23 = new Scanner(System.in);
-                    System.out.println("Press (1) to login/ (2) to create a new user/ (3) to get out");
-                    System.out.print("Type: ");
-                    op = input23.nextInt();
-                } catch(Exception e){
-                    System.out.println("You can only type numbers, Exception error: " + e.getMessage());
-                    continue;
-                }  
+                op = showOptions();
             }   
             if(op == 1){
                 int id = getIdBylogin(users);
-                boolean ok = false;
-                if(id == -1){
-                    System.out.println("USER DOESN'T EXIST!");
-                }else{
-                    ok = getPassword(users.get(id));
-                    if(!ok){
-                        System.out.println("WRONG PASSWORD!");
-                    }else{
-                        System.out.println("SUCCESSFUL LOGIN!");
-                    }
-                }
+                boolean ok = loginUser(users,id);
                 if(ok){
                     while(true) {
-                        System.out.println("Press (1) to EDIT USER/ (2) to ADD FRIEND/ (3) to SEND A MESSAGE/ (4) to " +
-                                "CREATE A COMMUNITY/ (5) COMMUNITIES / (6) SHOW MY USER/ (7) to DELETE MY ACCOUNT/" +
-                                " (8) to SEND A NEW FEED/(9) Visit an user /(10) to LOGOUT ");
-                        System.out.print("type:");
+                        Menu.showMenu();
                         int op2 = input.nextInt();
-                        Scanner input3 = new Scanner(System.in);
-                        Scanner input4 = new Scanner(System.in);
+                        Scanner input3 = new Scanner(System.in), input4 = new Scanner(System.in);
                         if (op2 == 1) {// EDIT USER
-                            System.out.println("   Editing user  \n");
-                            System.out.println("Press (1) to change the name/ (2) to change the login/ " +
-                                    "(3) to change the password/ (4) to " +
-                                    "to change the age/ (5) to change the address/ (6) Privacity ");
-                            System.out.print("Type:");
+                            Menu.showEdit();
                             int choice = input3.nextInt();
                             if(choice == 1){
                                 try{
@@ -297,8 +286,7 @@ public abstract class Main {
                                 if(!op3.equals("NO") && !op3.equals("YES")){
                                     throw new Exception("This is not an option!"); 
                                 }
-                                if(op3.equals("NO")){
-                                }else{
+                                if (!op3.equals("NO")) {
                                     users.remove(id);
                                     System.out.println("User was deleted!");
                                     break;
@@ -340,12 +328,10 @@ public abstract class Main {
                     }
                 }
             }else if( op == 2){
+                Scanner input2 = new Scanner(System.in), input3 = new Scanner(System.in),input4 = new Scanner(System.in);
                 try{
                     System.out.println("  Creating Account  ");
-                    Scanner input2 = new Scanner(System.in);
-                    Scanner input3 = new Scanner(System.in);
-                    Scanner input4 = new Scanner(System.in);
-                    String name, login,password;
+                    String name, login, password;
                     System.out.print("Type the name: ");
                     name = input2.next();
                     if(hasDigits(name)) {
